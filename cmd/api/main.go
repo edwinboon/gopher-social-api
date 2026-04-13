@@ -1,10 +1,14 @@
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/edwinboon/gopher-social-api/internal/env"
+)
 
 func main() {
 	cfg := config{
-		addr: ":8080",
+		addr: env.GetEnv("ADDR", ":8080"),
 	}
 
 	app := &application{
@@ -15,4 +19,3 @@ func main() {
 
 	log.Fatal(app.serve(mux))
 }
-
