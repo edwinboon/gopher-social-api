@@ -17,7 +17,7 @@ type config struct {
 }
 
 type dbConfig struct {
-	addr         string
+	dsn          string
 	maxOpenConns int
 	maxIdleConns int
 	maxIdleTime  time.Duration

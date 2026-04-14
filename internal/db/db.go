@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func New(addr string, maxOpenConns, maxIdleConns int, maxIdleTime time.Duration) (*sql.DB, error) {
-	db, err := sql.Open("postgres", addr)
+func New(dsn string, maxOpenConns, maxIdleConns int, maxIdleTime time.Duration) (*sql.DB, error) {
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -21,6 +21,7 @@ func New(addr string, maxOpenConns, maxIdleConns int, maxIdleTime time.Duration)
 	defer cancel()
 
 	if err = db.PingContext(ctx); err != nil {
+		_ = db.Close() // avoid leaking resources if the connection fails
 		return nil, err
 	}
 
