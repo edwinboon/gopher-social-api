@@ -13,7 +13,7 @@ func main() {
 	cfg := config{
 		addr: env.GetEnv("ADDR", ":8080"),
 		db: dbConfig{
-			dsn:          env.GetEnv("DB_ADDR", "postgres://admin:admin@localhost/social?sslmode=disable"),
+			dsn:          env.GetEnv("DB_DSN", "postgres://admin:admin@localhost/social?sslmode=disable"),
 			maxOpenConns: env.GetEnvAsInt("DB_MAX_OPEN_CONNS", 25),
 			maxIdleConns: env.GetEnvAsInt("DB_MAX_IDLE_CONNS", 25),
 			maxIdleTime:  env.GetEnvAsDuration("DB_MAX_IDLE_TIME", time.Minute*15),
