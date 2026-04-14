@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16.3
+    container_name: postgres-db
+    # Local development only. Do not hardcode credentials here or reuse this
+    # configuration for production without supplying secure environment variables.
+    environment:
+      POSTGRES_DB: social
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:
