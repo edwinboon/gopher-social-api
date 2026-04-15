@@ -63,7 +63,7 @@ func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, errNotFound
+			return nil, ErrNotFound
 		default:
 			return nil, err
 		}
