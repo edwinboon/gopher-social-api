@@ -1,9 +1,12 @@
 package main
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/edwinboon/gopher-social-api/internal/store"
+	"github.com/go-chi/chi/v5"
 )
 
 type CreatePostPayload struct {
@@ -33,6 +36,34 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	if err := WriteJSON(w, http.StatusCreated, post); err != nil {
+		WriteJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
+func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
+	postIDParam := chi.URLParam(r, "postId")
+
+	postID, err := strconv.ParseInt(postIDParam, 10, 64)
+	if err != nil {
+		WriteJSONError(w, http.StatusBadRequest, "invalid post ID")
+		return
+	}
+
+	ctx := r.Context()
+
+	post, err := app.store.Posts.GetByID(ctx, postID)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			WriteJSONError(w, http.StatusNotFound, err.Error())
+		default:
+			WriteJSONError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	if err := WriteJSON(w, http.StatusOK, post); err != nil {
 		WriteJSONError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
