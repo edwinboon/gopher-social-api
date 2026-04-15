@@ -11,7 +11,9 @@ import (
 
 func main() {
 	cfg := config{
-		addr: env.GetEnv("ADDR", ":8080"),
+		addr:    env.GetEnv("ADDR", ":8080"),
+		env:     env.GetEnv("ENV", "development"),
+		version: env.GetEnv("VERSION", "1.0.0"),
 		db: dbConfig{
 			dsn:          env.GetEnv("DB_DSN", "postgres://admin:admin@localhost/social?sslmode=disable"),
 			maxOpenConns: env.GetEnvAsInt("DB_MAX_OPEN_CONNS", 25),

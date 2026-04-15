@@ -3,5 +3,13 @@ package main
 import "net/http"
 
 func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
+	data := map[string]string{
+		"status":  "available",
+		"env":     app.config.env,
+		"version": app.config.version,
+	}
+
+	if err := WriteJSON(w, http.StatusOK, data); err != nil {
+		WriteJSONError(w, http.StatusInternalServerError, err.Error())
+	}
 }
