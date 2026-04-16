@@ -6,12 +6,12 @@ import (
 )
 
 func (app *application) internalServerErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
-	log.Printf("internal server error: %s path: %s error: %v", r.Method, r.URL.Path, err.Error())
+	log.Printf("internal server error: %s path: %s error: %s", r.Method, r.URL.Path, err.Error())
 	WriteJSONError(w, http.StatusInternalServerError, "the server encountered a problem and could not process your request")
 }
 
 func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Request, err error) {
-	log.Printf("bad request: %s path: %s error: %v", r.Method, r.URL.Path, err.Error())
+	log.Printf("bad request: %s path: %s error: %s", r.Method, r.URL.Path, err.Error())
 	WriteJSONError(w, http.StatusBadRequest, err.Error())
 }
 
