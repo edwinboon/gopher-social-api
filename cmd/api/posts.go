@@ -46,7 +46,7 @@ func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	postID, err := strconv.ParseInt(postIDParam, 10, 64)
 	if err != nil {
-		app.internalServerErrorResponse(w, r, err)
+		app.badRequestResponse(w, r, errors.New("invalid post ID"))
 		return
 	}
 
