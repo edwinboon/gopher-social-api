@@ -18,6 +18,11 @@ type Post struct {
 	UpdatedAt string   `json:"updated_at"`
 }
 
+type PostWithComments struct {
+	Post
+	Comments []CommentWithUser `json:"comments"`
+}
+
 type PostStore struct {
 	db *sql.DB
 }
