@@ -10,17 +10,21 @@ var ErrNotFound = errors.New("resource not found")
 
 type Store struct {
 	Posts interface {
-		GetByID(context.Context, int64) (*Post, error)
+		GetByID(context.Context, int64) (*PostWithComments, error)
 		Create(context.Context, *Post) error
 	}
 	Users interface {
 		Create(context.Context, *User) error
 	}
+	Comments interface {
+		GetByPostID(context.Context, int64) ([]CommentWithUser, error)
+	}
 }
 
 func NewStore(db *sql.DB) Store {
 	return Store{
-		Posts: &PostStore{db},
-		Users: &UserStore{db},
+		Posts:    &PostStore{db},
+		Users:    &UserStore{db},
+		Comments: &CommentStore{db},
 	}
 }
