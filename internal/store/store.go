@@ -10,7 +10,7 @@ var ErrNotFound = errors.New("resource not found")
 
 type Store struct {
 	Posts interface {
-		GetByID(context.Context, int64) (*PostWithComments, error)
+		GetByID(context.Context, int64) (*Post, error)
 		Create(context.Context, *Post) error
 	}
 	Users interface {

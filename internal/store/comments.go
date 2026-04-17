@@ -24,9 +24,9 @@ type CommentStore struct {
 
 func (s *CommentStore) GetByPostID(ctx context.Context, postID int64) ([]CommentWithUser, error) {
 	query := `
-		SELECT c.id, c.post_id, c.user_id, c.content, c.created_at, users.id, users.username  FROM comments c 
-		JOIN users on users.id = c.user_id 
-		WHERE c.post_id = $1 
+		SELECT c.id, c.post_id, c.user_id, c.content, c.created_at, users.username FROM comments c
+		JOIN users on users.id = c.user_id
+		WHERE c.post_id = $1
 		ORDER BY c.created_at DESC;
 	`
 	rows, err := s.db.QueryContext(ctx, query, postID)
@@ -46,14 +46,18 @@ func (s *CommentStore) GetByPostID(ctx context.Context, postID int64) ([]Comment
 			&c.UserID,
 			&c.Content,
 			&c.CreatedAt,
-			&c.User.ID,
 			&c.User.Username,
 		)
 		if err != nil {
 			return nil, err
 		}
+		c.User.ID = c.UserID
 
 		comments = append(comments, c)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return comments, nil

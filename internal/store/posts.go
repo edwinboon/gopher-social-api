@@ -51,10 +51,10 @@ func (s *PostStore) Create(ctx context.Context, post *Post) error {
 	return nil
 }
 
-func (s *PostStore) GetByID(ctx context.Context, id int64) (*PostWithComments, error) {
+func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 	query := `SELECT id, title, content, user_id, tags, created_at, updated_at FROM posts WHERE id = $1`
 
-	post := &PostWithComments{}
+	post := &Post{}
 
 	err := s.db.QueryRowContext(ctx, query, id).Scan(
 		&post.ID,
