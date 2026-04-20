@@ -80,7 +80,11 @@ func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 func (s *PostStore) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM posts WHERE id = $1`
 
-	err := s.db.QueryRowContext(ctx, query, id).Err()
+	post := &Post{}
+
+	err := s.db.QueryRowContext(ctx, query, id).Scan(
+		&post.ID,
+	)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):

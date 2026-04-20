@@ -88,7 +88,7 @@ func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request) {
 	postIDParam := chi.URLParam(r, "postId")
 
-	PostID, err := strconv.ParseInt(postIDParam, 10, 64)
+	postID, err := strconv.ParseInt(postIDParam, 10, 64)
 	if err != nil {
 		app.badRequestResponse(w, r, errors.New("invalid post ID"))
 		return
@@ -96,7 +96,7 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 
 	ctx := r.Context()
 
-	err = app.store.Posts.Delete(ctx, PostID)
+	err = app.store.Posts.Delete(ctx, postID)
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrNotFound):
