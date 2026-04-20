@@ -13,6 +13,7 @@ type Store struct {
 		GetByID(context.Context, int64) (*Post, error)
 		Create(context.Context, *Post) error
 		Delete(context.Context, int64) error
+		Patch(context.Context, *Post) (*Post, error)
 	}
 	Users interface {
 		Create(context.Context, *User) error

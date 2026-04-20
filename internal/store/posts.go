@@ -96,3 +96,36 @@ func (s *PostStore) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (s *PostStore) Patch(ctx context.Context, post *Post) (*Post, error) {
+	query := `
+		UPDATE posts SET title = COALESCE($1, title), content = COALESCE($2, content), tags = COALESCE($3, tags), updated_at = NOW() 
+		WHERE id = $4
+		RETURNING id, title, content, tags, updated_at
+	`
+
+	err := s.db.QueryRowContext(
+		ctx,
+		query,
+		post.Title,
+		post.Content,
+		pq.Array(post.Tags),
+		post.ID,
+	).Scan(
+		&post.ID,
+		&post.Title,
+		&post.Content,
+		pq.Array(&post.Tags),
+		&post.UpdatedAt,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return post, nil
+}

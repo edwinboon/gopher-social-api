@@ -15,6 +15,12 @@ type CreatePostPayload struct {
 	Tags    []string `json:"tags" validate:"required"`
 }
 
+type UpdatePostPayload struct {
+	Title   string   `json:"title" validate:"omitempty,max=100"`
+	Content string   `json:"content" validate:"omitempty,max=1000"`
+	Tags    []string `json:"tags" validate:"omitempty"`
+}
+
 func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreatePostPayload
 
@@ -108,4 +114,52 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request) {
+	postIDParam := chi.URLParam(r, "postId")
+
+	postID, err := strconv.ParseInt(postIDParam, 10, 64)
+	if err != nil {
+		app.badRequestResponse(w, r, errors.New("invalid post ID"))
+		return
+	}
+
+	var payload UpdatePostPayload
+
+	if err := ReadJSON(w, r, &payload); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	if err := Validate.Struct(payload); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	post := &store.Post{
+		ID:      postID,
+		Title:   payload.Title,
+		Content: payload.Content,
+		Tags:    payload.Tags,
+		UserID:  1, // TODO: get user ID from authentication
+	}
+
+	ctx := r.Context()
+
+	updatedPost, err := app.store.Posts.Patch(ctx, post)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.internalServerErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if err := WriteJSON(w, http.StatusOK, updatedPost); err != nil {
+		app.internalServerErrorResponse(w, r, err)
+		return
+	}
 }
