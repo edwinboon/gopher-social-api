@@ -51,14 +51,15 @@ func (app *application) mount() http.Handler {
 
 			r.Route("/{postId}", func(r chi.Router) {
 				r.Delete("/", app.deletePostHandler)
-				// Middleware to load the post from the database and add it to the request context
-				r.Use(app.postsContextMiddleware)
-				r.Get("/", app.getPostHandler)
-				r.Patch("/", app.updatePostHandler)
+
+				r.Group(func(r chi.Router) {
+					r.Use(app.postsContextMiddleware)
+					r.Get("/", app.getPostHandler)
+					r.Patch("/", app.updatePostHandler)
+				})
 			})
 		})
 	})
-
 	return r
 }
 
