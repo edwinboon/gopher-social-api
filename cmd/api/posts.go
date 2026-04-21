@@ -29,7 +29,7 @@ const postCtx postKey = "post"
 func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreatePostPayload
 
-	if err := ReadJSON(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
@@ -51,7 +51,7 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := WriteJSON(w, http.StatusCreated, post); err != nil {
+	if err := app.jsonResponse(w, http.StatusCreated, post); err != nil {
 		app.internalServerErrorResponse(w, r, err)
 		return
 	}
@@ -71,7 +71,7 @@ func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 		Comments: comments,
 	}
 
-	if err := WriteJSON(w, http.StatusOK, postWithComments); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, postWithComments); err != nil {
 		app.internalServerErrorResponse(w, r, err)
 		return
 	}
@@ -105,7 +105,7 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	post := getPostFromCtx(r)
 
 	var payload UpdatePostPayload
-	if err := ReadJSON(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
@@ -138,7 +138,7 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := WriteJSON(w, http.StatusOK, updatedPost); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, updatedPost); err != nil {
 		app.internalServerErrorResponse(w, r, err)
 		return
 	}

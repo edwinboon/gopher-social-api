@@ -9,7 +9,8 @@ func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Reques
 		"version": app.config.version,
 	}
 
-	if err := WriteJSON(w, http.StatusOK, data); err != nil {
+	// use just writeJSON instead of jsonResponse to avoid wrapping the response in a "data" envelope
+	if err := writeJSON(w, http.StatusOK, data); err != nil {
 		app.internalServerErrorResponse(w, r, err)
 	}
 }
