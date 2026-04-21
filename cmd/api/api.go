@@ -50,7 +50,11 @@ func (app *application) mount() http.Handler {
 			r.Post("/", app.createPostHandler)
 
 			r.Route("/{postId}", func(r chi.Router) {
+				r.Delete("/", app.deletePostHandler)
+				// Middleware to load the post from the database and add it to the request context
+				r.Use(app.postsContextMiddleware)
 				r.Get("/", app.getPostHandler)
+				r.Patch("/", app.updatePostHandler)
 			})
 		})
 	})
