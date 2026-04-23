@@ -16,6 +16,7 @@ type Post struct {
 	Tags      []string `json:"tags"`
 	CreatedAt string   `json:"created_at"`
 	UpdatedAt string   `json:"updated_at"`
+	Version   int64    `json:"version"`
 }
 
 type PostWithComments struct {
@@ -52,7 +53,7 @@ func (s *PostStore) Create(ctx context.Context, post *Post) error {
 }
 
 func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
-	query := `SELECT id, title, content, user_id, tags, created_at, updated_at FROM posts WHERE id = $1`
+	query := `SELECT id, title, content, user_id, tags, version, created_at, updated_at FROM posts WHERE id = $1`
 
 	post := &Post{}
 
@@ -62,6 +63,7 @@ func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 		&post.Content,
 		&post.UserID,
 		pq.Array(&post.Tags),
+		&post.Version,
 		&post.CreatedAt,
 		&post.UpdatedAt,
 	)
@@ -99,9 +101,9 @@ func (s *PostStore) Delete(ctx context.Context, id int64) error {
 
 func (s *PostStore) Patch(ctx context.Context, post *Post) (*Post, error) {
 	query := `
-		UPDATE posts SET title = COALESCE($1, title), content = COALESCE($2, content), tags = COALESCE($3, tags), updated_at = NOW() 
-		WHERE id = $4
-		RETURNING id, title, content, tags, updated_at
+		UPDATE posts SET title = COALESCE($1, title), content = COALESCE($2, content), tags = COALESCE($3, tags), version = version + 1, updated_at = NOW() 
+		WHERE id = $4 AND version = $5
+		RETURNING id, title, content, tags, version, updated_at
 	`
 
 	err := s.db.QueryRowContext(
@@ -111,11 +113,13 @@ func (s *PostStore) Patch(ctx context.Context, post *Post) (*Post, error) {
 		post.Content,
 		pq.Array(post.Tags),
 		post.ID,
+		post.Version,
 	).Scan(
 		&post.ID,
 		&post.Title,
 		&post.Content,
 		pq.Array(&post.Tags),
+		&post.Version,
 		&post.UpdatedAt,
 	)
 	if err != nil {
