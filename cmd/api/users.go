@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -11,15 +12,15 @@ import (
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseInt(chi.URLParam(r, "userId"), 10, 64)
 	if err != nil {
-		app.badRequestResponse(w, r, err)
+		app.badRequestResponse(w, r, errors.New("invalid user ID"))
 		return
 	}
 	ctx := r.Context()
 
 	user, err := app.store.Users.GetByID(ctx, userID)
 	if err != nil {
-		switch err {
-		case store.ErrNotFound:
+		switch {
+		case errors.Is(err, store.ErrNotFound):
 			app.notFoundResponse(w, r)
 		default:
 			app.internalServerErrorResponse(w, r, err)
