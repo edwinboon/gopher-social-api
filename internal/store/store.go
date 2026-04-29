@@ -7,11 +7,9 @@ import (
 	"time"
 )
 
-var (
-	ErrNotFound = errors.New("resource not found")
+var ErrNotFound = errors.New("resource not found")
 
-	QueryTimeoutDuration = 5 * time.Second
-)
+const QueryTimeoutDuration = 5 * time.Second
 
 type Store struct {
 	Posts interface {
