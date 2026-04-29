@@ -23,6 +23,7 @@ type Store struct {
 	}
 	Comments interface {
 		GetByPostID(context.Context, int64) ([]CommentWithUser, error)
+		Create(context.Context, *Comment) error
 	}
 }
 
