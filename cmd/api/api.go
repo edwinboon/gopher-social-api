@@ -65,9 +65,8 @@ func (app *application) mount() http.Handler {
 				r.Use(app.userContextMiddleware)
 
 				r.Get("/", app.getUserHandler)
-				// Follow and unfollow endpoints via PUT method to indicate idempotent operations
-				r.Put("/follow", app.followUserHandler)
-				r.Put("/unfollow", app.unfollowUserHandler)
+				r.Post("/follow", app.followUserHandler)
+				r.Delete("/unfollow", app.unfollowUserHandler)
 			})
 		})
 	})

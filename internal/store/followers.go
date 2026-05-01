@@ -18,7 +18,7 @@ type FollowStore struct {
 	db *sql.DB
 }
 
-func (s *FollowStore) Follow(ctx context.Context, followerID, userID int64) error {
+func (s *FollowStore) Follow(ctx context.Context, userID, followerID int64) error {
 	query := `INSERT INTO followers (user_id, follower_id) VALUES ($1, $2)`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -34,7 +34,7 @@ func (s *FollowStore) Follow(ctx context.Context, followerID, userID int64) erro
 	return nil
 }
 
-func (s *FollowStore) Unfollow(ctx context.Context, followerID, userID int64) error {
+func (s *FollowStore) Unfollow(ctx context.Context, userID, followerID int64) error {
 	query := `DELETE FROM followers WHERE user_id = $1 AND follower_id = $2`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
