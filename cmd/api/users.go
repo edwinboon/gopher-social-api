@@ -39,7 +39,7 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 
 	ctx := r.Context()
 
-	if err := app.store.Followers.Follow(ctx, payload.UserID, followedUser.ID); err != nil {
+	if err := app.store.Followers.Follow(ctx, followedUser.ID, payload.UserID); err != nil {
 		switch {
 		case errors.Is(err, store.ErrAlreadyExists):
 			app.alreadyExistsResponse(w, r, errors.New("already following this user"))
@@ -65,7 +65,7 @@ func (app *application) unfollowUserHandler(w http.ResponseWriter, r *http.Reque
 
 	ctx := r.Context()
 
-	if err := app.store.Followers.Unfollow(ctx, payload.UserID, followedUser.ID); err != nil {
+	if err := app.store.Followers.Unfollow(ctx, followedUser.ID, payload.UserID); err != nil {
 		app.internalServerErrorResponse(w, r, err)
 		return
 	}
